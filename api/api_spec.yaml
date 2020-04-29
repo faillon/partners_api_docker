@@ -1,0 +1,183 @@
+swagger: "2.0"
+info:
+  description: "This is a test REST api for partners"
+  version: "1.0.0"
+  title: "Swagger Partners API"
+host: "localhost:5000"
+basePath: "/api/v1"
+tags:
+- name: "partners"
+  description: "methods for working with Partners"
+schemes:
+- "https"
+- "http"
+paths:
+  /partners:
+    get:
+      tags:
+      - "partners"
+      summary: "Finds All partners"
+      description: ""
+      operationId: "api.partner.list_partners"
+      produces:
+      - "application/json"
+      responses:
+        "200":
+          description: "Success"
+        "500":
+          description: "Internal Error"
+    post:
+      tags:
+      - "partners"
+      summary: "Create a new partner"
+      description: ""
+      operationId: "api.partner.create_partner"
+      consumes:
+      - "application/json"
+      produces:
+      - "application/json"
+      parameters:
+      - in: "body"
+        name: "body"
+        description: "Partner json object"
+        required: true
+        schema:
+          $ref: "#/definitions/Partner"
+      responses:
+        "400":
+          description: "Invalid Operation"
+        "200":
+          description: "Success"
+  /partners/{id}:
+    get:
+      tags:
+      - "partners"
+      summary: "Finds Partners by id"
+      description: ""
+      operationId: "api.partner.get_partner"
+      produces:
+      - "application/json"
+      parameters:
+      - name: "id"
+        in: "path"
+        description: "parter id for filter"
+        required: true
+        type: "integer"
+      responses:
+        "200":
+          description: "successful operation"
+          schema:
+            type: "array"
+            items:
+              $ref: "#/definitions/Partner"
+        "400":
+          description: "Invalid id value"
+  /partners/nearest:
+    get:
+      tags:
+      - "partners"
+      summary: "Finds the nearest partners given a location"
+      description: ""
+      operationId: "api.partner.find_nearest_partner"
+      produces:
+      - "application/json"
+      parameters:
+      - name: "latitude"
+        in: "query"
+        description: "latitude to search"
+        required: true
+        type: "number"
+      - name: "longitude"
+        in: "query"
+        description: "longitude to search"
+        required: true
+        type: "number"
+      responses:
+        "200":
+          description: "successful operation"
+          schema:
+            type: "array"
+            items:
+              $ref: "#/definitions/Partner"
+        "400":
+          description: "Invalid query data"
+definitions:
+  
+  Partner:
+    type: "object"
+    required:
+    - "id"
+    - "tradingName"
+    - "ownerName"
+    - "document"
+    - "coverageArea"
+    - "address"
+    properties:
+      id:
+        type: "integer"
+        format: "int64"
+        example: 22
+      tradingName:
+        type: "string"
+        example: "Adega Osasco"
+      ownerName:
+        type: "string"
+        example: "Ze da Ambev"
+      document:
+        type: "string"
+        example: "02.453.716/000170"
+      coverageArea:
+        $ref: "#/definitions/MultiPolygon"
+      address:
+        $ref: "#/definitions/Point"
+  
+  Geometry:
+    type: "object"
+    description: "GeoJSon geometry"
+    discriminator: "type"
+    required:
+      - "type"
+    externalDocs:
+      url: "http://geojson.org/geojson-spec.html#geometry-objects"
+    properties:
+      type:
+        type: "string"
+        enum:
+        - "Point"
+        - "MultiPolygon"
+        description: "the geometry type"
+  
+  Point2D:
+    type: "array"
+    maxItems: 2
+    minItems: 2
+    items:
+      type: "number"
+  
+  Point:
+    type: "object"
+    description: "GeoJSon geometry"
+    externalDocs:
+      url: "http://geojson.org/geojson-spec.html#id2"
+    allOf:
+      - $ref: "#/definitions/Geometry"
+      - properties:
+          coordinates:
+            $ref: '#/definitions/Point2D'
+      
+  MultiPolygon:
+    type: "object"
+    description: "GeoJSon geometry"
+    externalDocs:
+      url: "http://geojson.org/geojson-spec.html#id6"
+    allOf:
+      - $ref: "#/definitions/Geometry"
+      - properties:
+          coordinates:
+            type: "array"
+            items:
+              type: "array"
+              items:
+                type: "array"
+                items:
+                  $ref: '#/definitions/Point2D'

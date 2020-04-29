@@ -1,0 +1,11 @@
+version: '3.5'
+services:
+  app:
+    container_name: app-partners
+    restart: always
+    build: .
+    env_file: .env
+    volumes:
+      - .:/app
+    ports:
+      - "5000:5000"
