@@ -18,4 +18,4 @@ docker-compose up
 
 # Api Documentation
 
-The Partners API includes documentation using Swagger. Go to http://host:5000/api/v1/ui/. Replace host with the server dns or ip where you are running the API.
+The Partners API includes documentation using Swagger. Go to http://host:5000/api/v1/ui/. Replace host with the server dns or ip where you are running the API. You can test the API using Swagger.
